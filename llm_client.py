@@ -17,6 +17,9 @@ from typing import Dict, List, Optional
 import dashscope
 
 
+DEFAULT_API_KEY = "sk-fe0485c281964259b404907d483d3777"
+
+
 def _hash_messages(messages: List[Dict[str, str]]) -> str:
     """Return a short hash of messages for logging/manifest."""
     m = hashlib.sha256()
@@ -28,6 +31,7 @@ def _hash_messages(messages: List[Dict[str, str]]) -> str:
 @dataclass
 class LLMClient:
     """Simple wrapper around DashScope's ChatCompletion API.
+
 
     The client cycles through a predefined list of models. After every two
     requests it waits one second. If the API returns a 400 status code the
@@ -44,7 +48,9 @@ class LLMClient:
 
     def __post_init__(self) -> None:
         if self.api_key is None:
+
             self.api_key = os.getenv("DASHSCOPE_API_KEY")
+
         if self.models is None:
             self.models = [
                 "qwen-plus-2025-07-14",

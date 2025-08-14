@@ -30,7 +30,7 @@ scripts/
 ### 1. API配置
 在 `scoring_config.py` 中配置通义千问API：
 ```python
-QIANWEN_API_KEY = "your_api_key_here"
+QIANWEN_API_KEY = "sk-fe0485c281964259b404907d483d3777"
 QIANWEN_MODEL = "qwen-plus-2025-07-28"
 ```
 

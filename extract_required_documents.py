@@ -11,24 +11,14 @@ import sys
 from typing import List, Dict, Any
 import pdfplumber
 from datetime import datetime
-import requests
 import time
 
+from llm_client import LLMClient, DEFAULT_API_KEY
+
 class DocumentExtractor:
-    def __init__(self, api_key: str, api_base_url: str = "https://dashscope.aliyuncs.com/api/v1"):
-        """
-        初始化文档提取器
-        
-        Args:
-            api_key: 通义千问API密钥
-            api_base_url: API基础URL
-        """
-        self.api_key = api_key
-        self.api_base_url = api_base_url
-        self.headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
-        }
+    def __init__(self, llm: LLMClient | None = None):
+        """初始化文档提取器"""
+        self.llm = llm or LLMClient()
         
     def extract_text_from_pdf(self, pdf_path: str) -> List[Dict[str, Any]]:
         """
@@ -66,73 +56,6 @@ class DocumentExtractor:
             return []
             
         return pages_data
-    
-    def call_qianwen_api(self, prompt: str, page_num: int) -> Dict[str, Any]:
-        """
-        调用通义千问API进行文档要求识别
-        
-        Args:
-            prompt: 发送给API的提示词
-            page_num: 当前页码
-            
-        Returns:
-            API响应结果
-        """
-        url = f"{self.api_base_url}/services/aigc/text-generation/generation"
-        
-        payload = {
-            "model": "qwen-turbo",
-            "input": {
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": "你是一个专业的招标文件分析专家，擅长识别和提取招标文件中要求投标人提交的各种文档和材料。"
-                    },
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ]
-            },
-            "parameters": {
-                "temperature": 0.1,
-                "max_tokens": 2000
-            }
-        }
-        
-        try:
-            response = requests.post(url, headers=self.headers, json=payload, timeout=30)
-            response.raise_for_status()
-            
-            result = response.json()
-            
-            # 检查API响应格式
-            if "output" in result and "choices" in result["output"]:
-                content = result["output"]["choices"][0]["message"]["content"]
-                return {
-                    "success": True,
-                    "content": content,
-                    "page": page_num
-                }
-            else:
-                return {
-                    "success": False,
-                    "error": "API响应格式异常",
-                    "page": page_num
-                }
-                
-        except requests.exceptions.RequestException as e:
-            return {
-                "success": False,
-                "error": f"API请求失败: {e}",
-                "page": page_num
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "error": f"处理响应时出错: {e}",
-                "page": page_num
-            }
     
     def analyze_page_content(self, page_data: Dict[str, Any]) -> List[Dict[str, Any]]:
         """
@@ -175,35 +98,26 @@ class DocumentExtractor:
 请确保返回的是有效的JSON格式。
 """
         
-        # 调用通义千问API
-        result = self.call_qianwen_api(prompt, page_num)
-        
-        if not result["success"]:
-            print(f"第 {page_num} 页API调用失败: {result['error']}")
-            return []
-        
+        messages = [
+            {
+                "role": "system",
+                "content": "你是一个专业的招标文件分析专家，擅长识别和提取招标文件中要求投标人提交的各种文档和材料。",
+            },
+            {"role": "user", "content": prompt},
+        ]
+
         try:
-            # 解析API返回的JSON内容
-            api_response = json.loads(result["content"])
-            
-            if "documents" in api_response and api_response["documents"]:
-                documents = api_response["documents"]
-                
-                # 为每个文档添加页码信息
-                for doc in documents:
-                    doc["page"] = page_num
-                
-                return documents
-            else:
-                return []
-                
-        except json.JSONDecodeError as e:
-            print(f"第 {page_num} 页API响应JSON解析失败: {e}")
-            print(f"API响应内容: {result['content']}")
-            return []
+            api_response = self.llm.chat_json(messages)
         except Exception as e:
-            print(f"第 {page_num} 页处理异常: {e}")
+            print(f"第 {page_num} 页API调用失败: {e}")
             return []
+
+        if "documents" in api_response and api_response["documents"]:
+            documents = api_response["documents"]
+            for doc in documents:
+                doc["page"] = page_num
+            return documents
+        return []
     
     def extract_all_documents(self, pdf_path: str) -> List[Dict[str, Any]]:
         """
@@ -382,11 +296,8 @@ def main():
     print("=" * 50)
     
     # 检查API密钥
-    api_key = os.getenv("QIANWEN_API_KEY")
-    if not api_key:
-        print("❌ 错误：未设置通义千问API密钥")
-        print("请设置环境变量：export QIANWEN_API_KEY='your_api_key_here'")
-        sys.exit(1)
+    api_key = os.getenv("QIANWEN_API_KEY", DEFAULT_API_KEY)
+    llm = LLMClient(api_key=api_key)
     
     # 检查PDF文件
     pdf_path = "03.招标文件.pdf"
@@ -395,7 +306,7 @@ def main():
         sys.exit(1)
     
     # 创建提取器
-    extractor = DocumentExtractor(api_key)
+    extractor = DocumentExtractor(llm)
     
     try:
         # 提取所有文档

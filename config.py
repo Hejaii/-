@@ -7,7 +7,7 @@
 # 通义千问API配置
 QIANWEN_CONFIG = {
     "api_base_url": "https://dashscope.aliyuncs.com/api/v1",
-    "model": "qwen-turbo",
+    "model": "qwen-plus-2025-07-14",
     "temperature": 0.1,
     "max_tokens": 2000,
     "timeout": 30
