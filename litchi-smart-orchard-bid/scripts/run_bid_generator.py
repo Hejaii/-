@@ -78,7 +78,7 @@ def main():
         # 检查环境变量
         if not os.getenv('DASHSCOPE_API_KEY'):
             logger.error("环境变量DASHSCOPE_API_KEY未设置")
-            logger.info("请设置通义千问API密钥：export DASHSCOPE_API_KEY='your_api_key'")
+            logger.info("请设置通义千问API密钥：export DASHSCOPE_API_KEY='sk-fe0485c281964259b404907d483d3777'")
             return 1
         
         # 初始化标书生成器

@@ -2,17 +2,15 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
-import fitz  # PyMuPDF
+import pdfplumber
 from docx import Document
 
 
 def load_pdf(path: Path) -> str:
-    """Load text from a PDF using PyMuPDF."""
-    doc = fitz.open(path)
-    texts = [page.get_text("text") for page in doc]
-    doc.close()
+    """Load text from a PDF using pdfplumber."""
+    with pdfplumber.open(path) as pdf:
+        texts = [(page.extract_text() or "") for page in pdf.pages]
     return "\n".join(texts)
 
 

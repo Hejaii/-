@@ -22,7 +22,7 @@ pip install -r requirements.txt
 在使用前，需要设置通义千问API密钥：
 
 ```bash
-export QIANWEN_API_KEY='your_api_key_here'
+export QIANWEN_API_KEY='sk-fe0485c281964259b404907d483d3777'
 ```
 
 ## 使用方法
@@ -138,7 +138,7 @@ python extract_required_documents.py
 ### 使用方法
 
 ```bash
-export DASHSCOPE_API_KEY=your_key
+export DASHSCOPE_API_KEY=sk-fe0485c281964259b404907d483d3777
 export QWEN_MODEL=qwen-plus
 python main.py --analysis /path/analysis.txt --tender /path/tender.pdf --repo /path/repo --out ./output
 ```

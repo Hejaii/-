@@ -18,9 +18,8 @@ def test_pdf_extraction():
         print(f"❌ PDF文件不存在: {pdf_path}")
         return False
     
-    # 创建提取器（使用测试API密钥）
-    test_api_key = "test_key_for_testing"
-    extractor = DocumentExtractor(test_api_key)
+    # 创建提取器
+    extractor = DocumentExtractor()
     
     try:
         # 测试PDF文本提取
@@ -74,7 +73,7 @@ def test_dependencies():
     required_packages = [
         "pdfplumber",
         "requests",
-        "PyMuPDF"
+        "python-docx"
     ]
     
     missing_packages = []
@@ -121,7 +120,7 @@ def main():
     if passed == total:
         print("🎉 所有测试通过！可以开始使用文档提取器")
         print("\n📝 下一步:")
-        print("1. 设置通义千问API密钥: export QIANWEN_API_KEY='your_key'")
+        print("1. 设置通义千问API密钥: export QIANWEN_API_KEY='sk-fe0485c281964259b404907d483d3777'")
         print("2. 运行主程序: python extract_required_documents.py")
     else:
         print("⚠️ 部分测试失败，请检查上述错误信息")

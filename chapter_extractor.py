@@ -6,8 +6,9 @@ from typing import Dict
 from llm_client import LLMClient
 
 CHAPTER_PROMPT = (
-    "你是一名投标文件解析助手。给定招标文件全文，找出标题为“响应文件格式及附件”的章节，"\
-    "返回 JSON: {""chapter_title"": str, ""start_index"": int, ""end_index"": int, ""raw_text"": str, ""attachments_spec"": []}."\
+    "你是一名投标文件解析助手。给定招标文件全文，找出标题为“响应文件格式及附件”的章节，"
+    '返回 JSON: {"chapter_title": str, "start_index": int, "end_index": int, '
+    '"raw_text": str, "attachments_spec": []}。'
     "attachments_spec 每项包含 name, required_format, fields, layout_notes, filetype, constraints。"
 )
 
