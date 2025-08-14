@@ -73,7 +73,7 @@ def test_dependencies():
     required_packages = [
         "pdfplumber",
         "requests",
-        "PyMuPDF"
+        "python-docx"
     ]
     
     missing_packages = []

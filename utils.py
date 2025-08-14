@@ -34,19 +34,49 @@ def hash_text(text: str) -> str:
 
 
 def markdown_to_pdf(md_path: Path) -> Path:
-    """Convert a Markdown file to a simple PDF and return the PDF path."""
+
+    """Convert a Markdown file to a simple PDF without external deps."""
     text = md_path.read_text(encoding="utf-8")
     pdf_path = md_path.with_suffix(".pdf")
-    doc = fitz.open()
-    page = doc.new_page()
-    y = 72  # 1 inch top margin
-    for line in text.splitlines():
-        page.insert_text(fitz.Point(72, y), line, fontsize=12)
-        y += 14
-        if y > page.rect.height - 72:
-            page = doc.new_page()
-            y = 72
+    lines = text.splitlines()
+
+    def escape(s: str) -> str:
+        return s.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+
+    y_start = 760
+    line_height = 14
+    content = ["BT", "/F1 12 Tf", f"72 {y_start} Td"]
+    for line in lines:
+        content.append(f"({escape(line)}) Tj")
+        content.append(f"0 -{line_height} Td")
+    content.append("ET")
+    content_stream = "\n".join(content)
+
+    objects = [
+        "1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj",
+        "2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj",
+        "3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >> endobj",
+        f"4 0 obj << /Length {len(content_stream.encode('latin-1'))} >> stream\n{content_stream}\nendstream endobj",
+        "5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj",
+    ]
+
+    pdf_bytes = ["%PDF-1.4"]
+    xref_positions = [0]
+    offset = len("%PDF-1.4\n".encode("latin-1"))
+    for obj in objects:
+        xref_positions.append(offset)
+        pdf_bytes.append(obj)
+        offset += len(obj.encode("latin-1")) + 1
+    xref_start = offset
+    xref = ["xref", f"0 {len(xref_positions)}", "0000000000 65535 f "]
+    for pos in xref_positions[1:]:
+        xref.append(f"{pos:010d} 00000 n ")
+    trailer = f"trailer << /Size {len(xref_positions)} /Root 1 0 R >>"
+    pdf_bytes.extend(xref)
+    pdf_bytes.append(trailer)
+    pdf_bytes.append(f"startxref\n{xref_start}\n%%EOF")
+
     ensure_dir(pdf_path)
-    doc.save(pdf_path)
-    doc.close()
+    pdf_path.write_bytes("\n".join(pdf_bytes).encode("latin-1"))
+
     return pdf_path
