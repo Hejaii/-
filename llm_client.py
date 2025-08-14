@@ -32,6 +32,7 @@ def _hash_messages(messages: List[Dict[str, str]]) -> str:
 class LLMClient:
     """Simple wrapper around DashScope's ChatCompletion API.
 
+
     The client cycles through a predefined list of models. After every two
     requests it waits one second. If the API returns a 400 status code the
     client automatically switches to the next model in the list.
@@ -47,7 +48,9 @@ class LLMClient:
 
     def __post_init__(self) -> None:
         if self.api_key is None:
-            self.api_key = os.getenv("DASHSCOPE_API_KEY") or DEFAULT_API_KEY
+
+            self.api_key = os.getenv("DASHSCOPE_API_KEY")
+
         if self.models is None:
             self.models = [
                 "qwen-plus-2025-07-14",
