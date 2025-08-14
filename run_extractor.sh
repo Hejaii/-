@@ -24,16 +24,7 @@ fi
 
 # 检查API密钥
 if [ -z "$QIANWEN_API_KEY" ]; then
-    echo "❌ 错误：未设置通义千问API密钥"
-    echo ""
-    echo "请按以下步骤设置："
-    echo "1. 获取通义千问API密钥：https://dashscope.aliyun.com/"
-    echo "2. 设置环境变量："
-    echo "   export QIANWEN_API_KEY='your_api_key_here'"
-    echo "3. 或者将密钥添加到 ~/.bashrc 或 ~/.zshrc 文件中"
-    echo ""
-    echo "设置完成后，重新运行此脚本"
-    exit 1
+    export QIANWEN_API_KEY="sk-fe0485c281964259b404907d483d3777"
 fi
 
 # 检查PDF文件

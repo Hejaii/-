@@ -28,17 +28,7 @@ if %errorlevel% neq 0 (
 
 REM 检查API密钥
 if "%QIANWEN_API_KEY%"=="" (
-    echo ❌ 错误：未设置通义千问API密钥
-    echo.
-    echo 请按以下步骤设置：
-    echo 1. 获取通义千问API密钥：https://dashscope.aliyun.com/
-    echo 2. 设置环境变量：
-    echo    set QIANWEN_API_KEY=your_api_key_here
-    echo 3. 或者将密钥添加到系统环境变量中
-    echo.
-    echo 设置完成后，重新运行此脚本
-    pause
-    exit /b 1
+    set QIANWEN_API_KEY=sk-fe0485c281964259b404907d483d3777
 )
 
 REM 检查PDF文件

@@ -39,7 +39,7 @@ pip install pandas openpyxl
 
 ```python
 # API配置
-API_KEY = "your_api_key_here"  # 替换为您的通义千问API密钥
+API_KEY = "sk-fe0485c281964259b404907d483d3777"  # 替换为您的通义千问API密钥
 
 # 路径配置
 PROJECT_ROOT = "/path/to/your/project"  # 项目根目录路径
