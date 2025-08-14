@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+import fitz  # PyMuPDF
+
 
 def ensure_dir(path: Path) -> None:
     """Ensure parent directory exists."""
@@ -32,6 +34,7 @@ def hash_text(text: str) -> str:
 
 
 def markdown_to_pdf(md_path: Path) -> Path:
+
     """Convert a Markdown file to a simple PDF without external deps."""
     text = md_path.read_text(encoding="utf-8")
     pdf_path = md_path.with_suffix(".pdf")
@@ -75,4 +78,5 @@ def markdown_to_pdf(md_path: Path) -> Path:
 
     ensure_dir(pdf_path)
     pdf_path.write_bytes("\n".join(pdf_bytes).encode("latin-1"))
+
     return pdf_path
