@@ -84,17 +84,24 @@ class LLMClient:
         attempt = 0
         while True:
             try:
-                response = dashscope.Generation.call(
+                response = dashscope.ChatCompletion.call(
                     model=self.model,
-                    input={"messages": messages},
-                    parameters={"temperature": temperature, "max_tokens": max_tokens},
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
                 )
                 self._request_counter += 1
                 if self._request_counter % 2 == 0:
                     time.sleep(1)
 
                 if response.status_code == 200:
-                    return response.output.text
+                    output = getattr(response.output, "text", None)
+                    if output is None:
+                        try:
+                            output = response.output["choices"][0]["message"]["content"]
+                        except (KeyError, TypeError, IndexError):
+                            raise RuntimeError("Unexpected response format")
+                    return output
                 elif response.status_code == 400:
                     self._rotate_model()
                     continue
