@@ -130,3 +130,24 @@ python extract_required_documents.py
 
 本项目采用MIT许可证，详见LICENSE文件。
 
+
+## 自动生成响应文件与附件
+
+本仓库新增 `main.py` 等模块，可根据分析表与招标文件自动生成响应附件和逐条说明。
+
+### 使用方法
+
+```bash
+export DASHSCOPE_API_KEY=your_key
+export QWEN_MODEL=qwen-plus
+python main.py --analysis /path/analysis.txt --tender /path/tender.pdf --repo /path/repo --out ./output
+```
+
+### 输出目录
+
+- `attachments/`：自动生成的附件模板
+- `responses/`：针对每条要求的响应文件
+- `manifest.json`：生成过程的元数据
+- `logs/`：关键日志
+
+所有文本理解与生成均通过通义千问API完成，本地代码仅负责I/O与调度。
