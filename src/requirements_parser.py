@@ -10,7 +10,6 @@ from typing import List
 
 from llm_client import LLMClient as Client
 from doc_loader import load_document
-from .caching import LLMCache, llm_json
 
 
 @dataclass
@@ -57,6 +56,7 @@ def parse_requirements(path: Path, *, client: Client, cache: LLMCache, use_llm: 
     if use_llm:
         system = (
             "You convert requirement lists provided in JSON/CSV/Markdown/PDF into a JSON array "
+
             "of objects with fields id,title,keywords,source,notes,weight. keywords is a list of strings."
         )
         user = f"Input content:\n{text}\nReturn JSON array only."
@@ -77,5 +77,3 @@ def parse_requirements(path: Path, *, client: Client, cache: LLMCache, use_llm: 
                 item = {headers[i]: parts[i] for i in range(min(len(headers), len(parts)))}
                 items_raw.append(item)
 
-    items = [_from_dict(d, i) for i, d in enumerate(items_raw)]
-    return items

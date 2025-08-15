@@ -158,12 +158,10 @@ python main.py --analysis /path/analysis.txt --tender /path/tender.pdf --repo /p
 
 ```bash
 python -m build_pdf --requirements examples/reqs.json --kb ./kb --out build/output.pdf
-# 或直接解析招标 PDF
-python -m build_pdf --requirements 03.招标文件.pdf --kb ./kb --out build/output.pdf
-```
+
 
 参数说明：
-- `--requirements` 需求列表文件，支持 JSON/CSV/Markdown 表格或 PDF 招标文件
+- `--requirements` 需求列表文件，支持 JSON/CSV/Markdown 表格
 - `--kb` 知识库目录
 - `--out` 输出 PDF 路径
 - `--latex-template` 自定义 LaTeX 模板，可选
