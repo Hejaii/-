@@ -151,3 +151,22 @@ python main.py --analysis /path/analysis.txt --tender /path/tender.pdf --repo /p
 - `logs/`：关键日志
 
 所有文本理解与生成均通过通义千问API完成，本地代码仅负责I/O与调度。
+
+## 新增：基于需求列表构建 PDF
+
+本项目新增 `build_pdf` 管线，可将需求列表与知识库整合成单个 PDF。示例：
+
+```bash
+python -m build_pdf --requirements examples/reqs.json --kb ./kb --out build/output.pdf
+```
+
+参数说明：
+- `--requirements` 需求列表文件，支持 JSON/CSV/Markdown 表格
+- `--kb` 知识库目录
+- `--out` 输出 PDF 路径
+- `--latex-template` 自定义 LaTeX 模板，可选
+- `--workdir` 工作目录，默认 `./build`
+- `--topk` 每条需求检索候选数量，默认 5
+- `--use-llm` 是否启用 LLM 处理，默认 `true`
+
+生成文件包括：`merged.md`、`main.tex`、`meta.json`、`logs/build.log`。
