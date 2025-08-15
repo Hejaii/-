@@ -158,7 +158,7 @@ python main.py --analysis /path/analysis.txt --tender /path/tender.pdf --repo /p
 
 ```bash
 python -m build_pdf --requirements examples/reqs.json --kb ./kb --out build/output.pdf
-```
+
 
 参数说明：
 - `--requirements` 需求列表文件，支持 JSON/CSV/Markdown 表格
